@@ -1,0 +1,295 @@
+class Screen4 {
+  Platform pltGrnd, pltTop, pltLeft, pltRight;
+  Platform plt1, plt2, plt3;
+
+  Enemy enemy1;
+
+  Wall wLastLeft, wNextRight;
+  //Sprite sprBill;
+  String sFile;
+  PImage imgBG1, imgBG2;
+
+  int nW = width, nH, nX1, nX2, nY1, nY2;
+  int nSideUD, nSideLR, nSideUD2, nSideLR2, nSideUD3, nSideLR3, nSideUD4, nSideLR4; // Variables that store the nHit side for the hero and the level boundaries
+  int nSideUD5, nSideLR5, nSideUD6, nSideLR6, nSideUD7, nSideLR7;                   // Variables that store the nHit side for the hero and the platforms
+
+  int nEnemHitSideLR, nEnemHitSideUD; // Collision between the hero and the enemy
+
+  int nEnemSideUD, nEnemSideLR, nEnemSideUD2, nEnemSideLR2, nEnemSideUD3, nEnemSideLR3, nEnemSideUD4, nEnemSideLR4;    // Variables that store the nHit side for the hero and the level boundaries
+
+
+  int nPlatNum;          // number of platforms on the stage
+
+  int  nStart = 2, nExit = 2, nReEnter = 1;
+
+  float fDx, fDy;
+
+  // =============================== CONSTRUCTOR ================================
+  Screen4() {
+    enemy1 = new Enemy("gooStache.png", 500, height - 150.0, 50, 50, 0.6, 16.0, 0.8, 0, 1);
+
+    imgBG1 = loadImage("background.jpg");
+    imgBG1.resize(1200, 800);
+
+    nX2 = nW;
+
+    wLastLeft = new Wall("purpWall.png", 0, 50, 20, 200);
+    wNextRight = new Wall("purpWall.png", 1180, 50, 20, 200);
+
+    pltGrnd = new Platform("plank.png", 0, 750, 1200, 50);
+    pltTop = new Platform("plank.png", 0, 0, 1200, 50);
+    pltLeft = new Platform("plank.png", 0, 250, 50, 500);
+    pltRight = new Platform("plank.png", 1150, 250, 50, 500);
+
+    plt1 = new Platform("plank.png", 200, 50, 50, 400);
+    plt2 = new Platform("plank.png", 400, 400, 100, 50);
+    plt3 = new Platform("plank.png", 800, 400, 100, 50);
+  }
+  // =============================== UPDATE ================================
+  void update() {
+
+    image (imgBG1, nX1, nY1);
+
+    wLastLeft.update();
+    wNextRight.update();
+    collCheckLastLvl();
+    collCheckNxtLvl();
+
+    pltGrnd.update();
+    pltTop.update();
+    pltLeft.update();
+    pltRight.update();
+
+    plt1.update();
+    plt2.update();
+    plt3.update();
+
+    sprHero.update();
+
+    enemy1.follow(enemy1);
+    enemy1.update();
+
+    //println(sprHero.vPos.x, sprHero.vPos.y);
+  }
+  // ============== COLLISION-CHECK LAST LEVEL ============================================
+  void collCheckLastLvl() {
+    if (wLastLeft.isHit(sprHero, wLastLeft) == true) {
+      nScreen = 3;
+      sprHero.respawn(2);
+    }
+  }
+  // ============== COLLISION-CHECK NEXT LEVEL ============================================
+  void collCheckNxtLvl() {
+    if (wNextRight.isHit(sprHero, wNextRight) == true) {
+      nScreen = 5;
+      scr1.nReturn = 1;
+    }
+  }
+  // ============== COLLISION-CHECK UP & DOWN =============================================
+  void collCheckUpDown() {
+    if (sprHero.vPos.y >= height - sprHero.nH) {
+      sprHero.collGround();
+    }
+
+    nSideUD = pltGrnd.nHitUD(sprHero);
+    nSideUD2 = pltTop.nHitUD(sprHero);
+    nSideUD3 = pltLeft.nHitUD(sprHero);
+    nSideUD4 = pltRight.nHitUD(sprHero);
+
+    nSideUD5 = plt1.nHitUD(sprHero);
+    nSideUD6 = plt2.nHitUD(sprHero);
+    nSideUD7 = plt3.nHitUD(sprHero);
+    
+    if (nSideUD == 1) {
+      sprHero.collTop();
+    } else if (nSideUD == 2) {
+      sprHero.collBot();
+    }
+
+    if (nSideUD2 == 1) {
+      sprHero.collTop();
+    } else if (nSideUD2 == 2) {
+      sprHero.collBot();
+    }
+
+    if (nSideUD3 == 1) {
+      sprHero.collTop();
+    } else if (nSideUD3 == 2) {
+      sprHero.collBot();
+    }
+
+    if (nSideUD4 == 1) {
+      sprHero.collTop();
+    } else if (nSideUD4 == 2) {
+      sprHero.collBot();
+    }
+
+    if (nSideUD5 == 1) {
+      sprHero.collTop();
+    } else if (nSideUD5 == 2) {
+      sprHero.collBot();
+    }
+
+    if (nSideUD6 == 1) {
+      sprHero.collTop();
+    } else if (nSideUD6 == 2) {
+      sprHero.collBot();
+    }
+
+    if (nSideUD7 == 1) {
+      sprHero.collTop();
+    } else if (nSideUD7 == 2) {
+      sprHero.collBot();
+    }
+    
+    nEnemHitSideUD = enemy1.nEnemHitUD(sprHero);
+    if (nEnemHitSideUD == 1) {
+      sprHero.bumpBackUp();
+    }
+    
+    // ============================= ENEMY COLLISION UD=========================================
+    nEnemSideUD = pltGrnd.nHitUDE(enemy1);
+    nEnemSideUD2 = pltTop.nHitUDE(enemy1);
+    nEnemSideUD3 = pltLeft.nHitUDE(enemy1);
+    nEnemSideUD4 = pltRight.nHitUDE(enemy1);
+
+    if (nEnemSideUD == 1) {
+      enemy1.collTop();
+    } else if (nEnemSideUD == 2) {
+      enemy1.collBot();
+    }
+
+    if (nEnemSideUD2 == 1) {
+      enemy1.collTop();
+    } else if (nEnemSideUD2 == 2) {
+      enemy1.collBot();
+    }
+
+    if (nEnemSideUD3 == 1) {
+      enemy1.collTop();
+    } else if (nEnemSideUD3 == 2) {
+      enemy1.collBot();
+    }
+
+    if (nEnemSideUD4 == 1) {
+      enemy1.collTop();
+    } else if (nEnemSideUD4 == 2) {
+      enemy1.collBot();
+    }
+  }
+  // ============== COLLISION-CHECK LEFT & RIGHT =============================================
+  void collCheckLeftRight() {
+    nSideLR = pltGrnd.nHitLR(sprHero);
+    nSideLR2 = pltTop.nHitLR(sprHero);
+    nSideLR3 = pltLeft.nHitLR(sprHero);
+    nSideLR4 = pltRight.nHitLR(sprHero);
+
+    nSideLR5 = plt1.nHitLR(sprHero);
+    nSideLR6 = plt2.nHitLR(sprHero);
+    nSideLR7 = plt3.nHitLR(sprHero);
+
+    if (nSideLR == 3) {
+      sprHero.collLeft();
+    } else if (nSideLR == 4) {
+      sprHero.collRight();
+    }
+
+    if (nSideLR2 == 3) {
+      sprHero.collLeft();
+    } else if (nSideLR2 == 4) {
+      sprHero.collRight();
+    }
+
+    if (nSideLR3 == 3) {
+      sprHero.collLeft();
+    } else if (nSideLR3 == 4) {
+      sprHero.collRight();
+    }
+
+    if (nSideLR4 == 3) {
+      sprHero.collLeft();
+    } else if (nSideLR4 == 4) {
+      sprHero.collRight();
+    }
+
+    if (nSideLR5 == 3) {
+      sprHero.collLeft();
+    } else if (nSideLR5 == 4) {
+      sprHero.collRight();
+    }
+
+    if (nSideLR6 == 3) {
+      sprHero.collLeft();
+    } else if (nSideLR6 == 4) {
+      sprHero.collRight();
+    }
+
+    if (nSideLR7 == 3) {
+      sprHero.collLeft();
+    } else if (nSideLR7 == 4) {
+      sprHero.collRight();
+    }
+
+
+    nEnemHitSideLR = enemy1.nEnemHitLR(sprHero);
+    if (nEnemHitSideLR == 3) {
+      //sprHero.nTemp = 0;    // we tried using this for the timer, but it didn't end up working in time
+      sprHero.bumpBackLeft();
+    } else if (nEnemHitSideLR == 4) {
+      //sprHero.nTemp = 0;
+      sprHero.bumpBackRight();
+    }
+    // ============================= ENEMY COLLISION LR=========================================
+    nEnemSideLR = pltGrnd.nHitLRE(enemy1);
+    nEnemSideLR2 = pltTop.nHitLRE(enemy1);
+    nEnemSideLR3 = pltLeft.nHitLRE(enemy1);
+    nEnemSideLR4 = pltRight.nHitLRE(enemy1);
+
+    if (nEnemSideLR == 1) {
+      enemy1.collLeft();
+    } else if (nEnemSideLR == 2) {
+      enemy1.collRight();
+    }
+
+    if (nEnemSideLR2 == 1) {
+      enemy1.collLeft();
+    } else if (nEnemSideLR2 == 2) {
+      enemy1.collRight();
+    }
+
+    if (nEnemSideLR3 == 1) {
+      enemy1.collLeft();
+    } else if (nEnemSideLR3 == 2) {
+      enemy1.collRight();
+    }
+
+    if (nEnemSideLR4 == 1) {
+      enemy1.collLeft();
+    } else if (nEnemSideLR4 == 2) {
+      enemy1.collRight();
+    }
+  }
+  //===================================KEYPRESSED==================================
+  public void pressInput() {
+    if (key == 'w' || key == 'W'||keyCode==UP) {
+      sprHero.jump();
+      sprHero.canJump = false;
+    }
+    if (key == 'a' || key == 'A'||keyCode==LEFT) {
+      sprHero.nDirec = 1; //left
+    }
+    if (key == 'd' || key == 'D'||keyCode==RIGHT) {
+      sprHero.nDirec = 2; //right
+    } else if (key == 'r' || key == 'R') {
+      sprHero.respawn(nStart); //respawn
+    } else {
+      //sprHero.nDirec = 0;
+    }
+  }
+  //===================================KEYRELEASED==================================
+  public void releaseInput() {
+    if ((key=='d'||key=='D')||(key=='a'||key=='A')||keyCode==RIGHT||keyCode==LEFT) {
+      sprHero.nDirec = 0;
+    }
+  }
+}
